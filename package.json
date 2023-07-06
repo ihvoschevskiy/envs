@@ -1,0 +1,18 @@
+{
+  "name": "@ihvoschevskiy/environments",
+  "bin": {
+    "envs": "index.js"
+  },
+  "version": "1.0.2",
+  "description": "Инициализация окружения для разработки",
+  "main": "index.js",
+  "keywords": [
+    "environments"
+  ],
+  "author": "Igor` Hvoschevskiy",
+  "homepage": "https://github.com/ihvoschevskiy/envs",
+  "license": "ISC",
+  "dependencies": {
+    "enquirer": "^2.3.6"
+  }
+}
