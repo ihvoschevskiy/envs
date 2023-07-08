@@ -13,7 +13,9 @@ const fetchBranches = () => {
         .on('end', () => {
           const result = JSON.parse(Buffer.concat(data).toString())
           if (!result.length) reject({ err: 'error', message: 'data not found' })
-          const branches = result.map(itm => itm.name).filter(branch => /^(?!(HEAD|master))(.+)/.test(branch))
+          const branches = result
+            .map(itm => itm.name)
+            .filter(branch => /^(?!(HEAD|master|dev|testing))(.+)/.test(branch))
 
           response(branches)
         })
