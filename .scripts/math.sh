@@ -8,13 +8,33 @@ bp_w_1=1920
 bp_w_2=2560
 
 # heights
-bp_h_0=215
-bp_h_1=1540
+bp_h_0=750
+bp_h_1=1536
 
+widths=(450 1920 2560)
+heights=(750 1536)
+
+function prepareBPoints() {
+  input=("$@")
+
+  length="${#input[@]}"
+
+  result=()
+  for (( i=1; i < "${length}"; i++ )); do 
+    result+=("${input[i-1]}"/"${input[i]}")
+  done
+
+    result+=("Set sizes")
+    result+=("Quit")
+
+    echo "${result[@]}"
+}
 
 function calculate() {
+  units=$1
   while :
   do
+    echo
     read -p "Enter min and max preffered values px: " f_sizes 
     read -a F_SIZES <<< "$f_sizes"
     
@@ -28,7 +48,7 @@ function calculate() {
     # -minWidth * slope + minFontSize
     yAxisIntersection=$(bc <<< "scale=4; (-$min*$slope + ${F_SIZES[0]})/$rem")
 
-    preffered="${yAxisIntersection}rem + ${slope_vw}vw"
+    preffered="${yAxisIntersection}rem + ${slope_vw}${units}"
 
     minVal=$(bc <<< "scale=2; ${F_SIZES[0]}/$rem")
     maxVal=$(bc <<< "scale=2; ${F_SIZES[1]}/$rem")
@@ -44,62 +64,62 @@ function calculate() {
   done
 }
 
+function getClamp() {
+  echo
+  direction="$1"
+  arr=("$@")
+  min=0
+  max=0
+
+  select screen in "${arr[@]: 1}"
+  do
+     case $screen in
+       ([0-9]*)
+        IFS=/ read -r left right <<< "$screen"
+        min="$left"
+        max="$right"
+        break
+        ;;
+      "Set sizes")
+        read -p "Enter min and max sizes px: " szs 
+        read -a SZS <<< "$szs"
+        min=${SZS[0]}
+        max=${SZS[1]}
+        break
+        ;;
+      "Quit")
+        exit 1
+        break
+        ;;
+      *) echo "invalid option $REPLY";;
+    esac
+  done
+  calculate "$direction"
+}
+
 PS3='Please enter your choice: '
 
+echo
+echo -e "1rem = "$rem"px\n"
+
 options=("Get clamp values for width" "Get clamp values for height" "Quit")
-
-select opts in "${options[@]}"
-do
-  case $opt in
-    "Get clamp values")
-
-done
-
-options=("Get clamp values" "Quit")
 select opt in "${options[@]}"
 do
   case $opt in
-    "Get clamp values")
-        echo
-        echo -e "1rem = "$rem"px\n"
-
-        break_points=("${bp_w_0}/${bp_w_1}" "${bp_w_1}/${bp_w_2}" "Set sizes" "Quit")
-        min=0
-        max=0
-        select screens in "${break_points[@]}"
-        do
-          case $screens in
-            "${bp_w_0}/${bp_w_1}")
-              min=${bp_w_0}
-              max=${bp_w_1}
-              break
-              ;;
-            "${bp_w_1}/${bp_w_2}")
-              min=${bp_w_1}
-              max=${bp_w_2}
-              break
-              ;;
-            "Set sizes")
-              read -p "Enter min and max sizes px: " widts 
-              read -a WIDTS <<< "$widts"
-              min=${WIDTS[0]}
-              max=${WIDTS[1]}
-              break
-              ;;
-            "Quit")
-              exit 1
-              break
-              ;;
-            *) echo "invalid option $REPLY";;
-          esac
-        done
-        calculate 
+      "Get clamp values for width")
+        break_points=( $(prepareBPoints "${widths[@]}") )
+        echo "${break_points[2]}"
+        getClamp "vw" "${break_points[@]}" 
         break
         ;;
-    "Quit")
+      "Get clamp values for height")
+        break_points=( $(prepareBPoints "${heights[@]}") )
+        getClamp "vh" "${break_points[@]}"
         break
         ;;
-    *) echo "invalid option $REPLY";;
+      "Quit")
+        break
+        ;;
+      *) echo "invalid option $REPLY";;
   esac
 done
-
