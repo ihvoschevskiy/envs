@@ -1,7 +1,7 @@
 const { BUILD_DIRECTORY } = require('../config/paths')
 
 module.exports = {
-  host: 'localhost',
+  host: '0.0.0.0',
   port: 3000,
   client: {
     overlay: {

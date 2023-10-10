@@ -69,7 +69,7 @@ const prodPlugins = [
   new BundleAnalyzerPlugin({
     analyzerMode: 'disabled',
     openAnalyzer: true,
-    generateStatsFile: true,
+    generateStatsFile: false,
   }),
   new WebpackBar({}),
 ]

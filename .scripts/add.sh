@@ -40,7 +40,7 @@ for((i=1;i<=$#;i++)); do
         break
       fi
 
-      create "components" "$jp"
+      create "blocks/components" "$jp"
     done
   fi
 
@@ -55,7 +55,7 @@ for((i=1;i<=$#;i++)); do
         break
       fi
 
-      create "layouts" "$jp"
+      create "blocks/layouts" "$jp"
     done
   fi
 

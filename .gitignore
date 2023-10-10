@@ -27,3 +27,7 @@ node_modules/
 # cypress
 
 cypress/videos/
+
+# скрипты
+
+./scripts
