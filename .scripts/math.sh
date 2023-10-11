@@ -1,4 +1,5 @@
 #!/bin/bash
+declare -a break_points
 
 rem=16
 
@@ -16,18 +17,14 @@ heights=(750 1536)
 
 function prepareBPoints() {
   input=("$@")
-
   length="${#input[@]}"
 
-  result=()
   for (( i=1; i < "${length}"; i++ )); do 
-    result+=("${input[i-1]}"/"${input[i]}")
+    break_points+=("${input[i-1]}"/"${input[i]}")
   done
 
-    result+=("Set sizes")
-    result+=("Quit")
-
-    echo "${result[@]}"
+  break_points+=("Set sizes")
+  break_points+=("Quit")
 }
 
 function calculate() {
@@ -68,6 +65,7 @@ function getClamp() {
   echo
   direction="$1"
   arr=("$@")
+
   min=0
   max=0
 
@@ -75,7 +73,7 @@ function getClamp() {
   do
      case $screen in
        ([0-9]*)
-        IFS=/ read -r left right <<< "$screen"
+        IFS="/" read -r left right <<< "$screen"
         min="$left"
         max="$right"
         break
@@ -107,13 +105,12 @@ select opt in "${options[@]}"
 do
   case $opt in
       "Get clamp values for width")
-        break_points=( $(prepareBPoints "${widths[@]}") )
-        echo "${break_points[2]}"
+        prepareBPoints "${widths[@]}" 
         getClamp "vw" "${break_points[@]}" 
         break
         ;;
       "Get clamp values for height")
-        break_points=( $(prepareBPoints "${heights[@]}") )
+        prepareBPoints "${heights[@]}"
         getClamp "vh" "${break_points[@]}"
         break
         ;;
